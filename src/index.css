@@ -28,6 +28,20 @@ code {
   padding: 5px;
 }
 
+.product-list-item a {
+  text-decoration: none;
+}
+
+.product-reviews {
+  list-style: none;
+  padding: 0;
+}
+
+.product-reviews .product-reviews-item {
+  display: block;
+  padding: 8px 0;
+}
+
 .header {
   text-align: center;
   background-color: #222;
@@ -62,10 +76,6 @@ code {
 
 .header-link-active {
   border-bottom: #ebebeb solid 2px;
-}
-
-.product-list-item a {
-  text-decoration: none;
 }
 
 .search-container {
@@ -105,4 +115,24 @@ code {
 
 .animate-exit {
   display: none;
+}
+
+.tabs {
+  list-style: none;
+  padding: 0;
+}
+
+.tabs li {
+  display: inline-block;
+  padding: 5px;
+  margin: 0px 5px 0px 5px;
+  cursor: pointer;
+}
+
+.tabs li:focus {
+  outline: none;
+}
+
+.tabs li.active {
+  border-bottom: #222 solid 2px;
 }
