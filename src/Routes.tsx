@@ -1,12 +1,13 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { BrowserRouter as Router, Redirect, Route, RouteComponentProps, Switch } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import Header from "./Header";
-import AdminPage from "./admin/AdminPage";
 import ProductsPage from "./products/ProductsPage";
 import ProductPage from "./products/ProductPage";
 import LoginPage from "./LoginPage";
 import NotFoundPage from "./NotFoundPage";
+
+const AdminPage = React.lazy(() => import("./admin/AdminPage"));
 
 const Routes: React.FC<RouteComponentProps> = (props) => {
   const [loggedIn] = React.useState(true);
@@ -20,7 +21,13 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
             <Redirect exact from="/" to="/products"/>
             <Route path="/products" exact component={ProductsPage}/>
             <Route path="/products/:id" component={ProductPage}/>
-            <Route path="/admin">{loggedIn ? <AdminPage/> : <Redirect to="/login"/>}</Route>
+            <Route path="/admin">{loggedIn ? (
+              <Suspense fallback={<div className="page-container">Loading...</div>}>
+                <AdminPage/>
+              </Suspense>
+            ) : (
+              <Redirect to="/login"/>
+            )}</Route>
             <Route path="/login" component={LoginPage}/>
             <Route component={NotFoundPage}/>
           </Switch>
