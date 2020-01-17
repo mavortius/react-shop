@@ -1,6 +1,6 @@
 import React from "react";
 import { IProduct } from "./products-data";
-import Tabs from "./Tabs";
+import { Tabs, Tab } from "./Tabs";
 
 type Props = {
   product: IProduct,
@@ -19,10 +19,10 @@ const Product: React.FC<Props> = (props) => {
     <>
       <h1>{product.name}</h1>
       <Tabs>
-        <Tabs.Tab name="Description" initialActive={true} heading={() => <b>Description</b>}>
+        <Tab name="Description" initialActive={true} heading={() => <b>Description</b>}>
           <p>{product.description}</p>
-        </Tabs.Tab>
-        <Tabs.Tab name="Reviews" heading={() => "Reviews"}>
+        </Tab>
+        <Tab name="Reviews" heading={() => "Reviews"}>
           <ul className="product-reviews">
             {product.reviews.map(review => (
               <li key={review.reviewer} className="product-reviews-item">
@@ -30,7 +30,7 @@ const Product: React.FC<Props> = (props) => {
               </li>
             ))}
           </ul>
-        </Tabs.Tab>
+        </Tab>
       </Tabs>
 
       <p className="product-price">
