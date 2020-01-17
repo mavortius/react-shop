@@ -1,6 +1,7 @@
+import React, { useEffect, useState } from "react";
 import { Prompt, RouteComponentProps } from "react-router-dom";
 import { IProduct, products } from "./products-data";
-import React, { useEffect, useState } from "react";
+import Product from "./Product";
 
 type Props = RouteComponentProps<{ id: string }>;
 
@@ -28,19 +29,7 @@ const ProductPage: React.FC<Props> = (props) => {
     <div className="page-container">
       <Prompt when={!added} message={navAwayMessage()}/>
       {product ? (
-        <>
-          <h1>{product.name}</h1>
-          <p>{product?.description}</p>
-          <p className="product-price">
-            {new Intl.NumberFormat("en-US", {
-              currency: "USD",
-              style: "currency"
-            }).format(product?.price)}
-          </p>
-          {!added && (
-            <button onClick={handleAddClick}>Add to basket</button>
-          )}
-        </>
+        <Product product={product} inBasket={added} onAddToBasket={handleAddClick}/>
       ) : (
         <p>Product not found!</p>
       )}
