@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Prompt, RouteComponentProps } from "react-router-dom";
-import { IProduct, products } from "./products-data";
+import { getProduct, IProduct } from "./products-data";
 import Product from "./Product";
 
 type Props = RouteComponentProps<{ id: string }>;
@@ -8,13 +8,22 @@ type Props = RouteComponentProps<{ id: string }>;
 const ProductPage: React.FC<Props> = (props) => {
   const [added, setAdded] = useState(false);
   const [product, setProduct] = useState<IProduct | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (props.match.params.id) {
-      const id = parseInt(props.match.params.id, 10);
-      const prod = products.filter(p => p.id === id)[0];
+      // @ts-ignore
+      async function retrieveProduct() {
+        const id = parseInt(props.match.params.id, 10);
+        const prod = await getProduct(id);
 
-      setProduct(prod);
+        if (prod !== null) {
+          setProduct(prod);
+          setLoading(false);
+        }
+      }
+
+      retrieveProduct();
     }
   }, [product, props.match.params.id]);
 
@@ -28,8 +37,8 @@ const ProductPage: React.FC<Props> = (props) => {
   return (
     <div className="page-container">
       <Prompt when={!added} message={navAwayMessage()}/>
-      {product ? (
-        <Product product={product} inBasket={added} onAddToBasket={handleAddClick}/>
+      {product || loading ? (
+        <Product product={product!} inBasket={added} loading={loading} onAddToBasket={handleAddClick}/>
       ) : (
         <p>Product not found!</p>
       )}
