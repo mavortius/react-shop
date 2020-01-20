@@ -85,7 +85,7 @@ code {
 
 .admin-sections {
   list-style: none;
-  margin: 0px 0px 20px 0px;
+  margin: 0 0 20px 0;
   padding: 0;
 }
 
@@ -125,7 +125,7 @@ code {
 .tabs li {
   display: inline-block;
   padding: 5px;
-  margin: 0px 5px 0px 5px;
+  margin: 0 5px 0 5px;
   cursor: pointer;
 }
 
@@ -170,7 +170,7 @@ code {
 
 .form {
   width: 300px;
-  margin: 0px auto 0px auto;
+  margin: 0 auto 0 auto;
 }
 
 .form-group {
@@ -186,9 +186,15 @@ code {
 }
 
 .form-group input, select, textarea {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   font-size: 16px;
   padding: 5px;
   border: lightgray solid 1px;
   border-radius: 5px;
+}
+
+.form-error {
+  font-size: 13px;
+  color: red;
+  margin: 3px auto 0 0;
 }
