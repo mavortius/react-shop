@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-type TValues = {
+export type TValues = {
   [key: string]: any;
 }
 
@@ -13,18 +13,19 @@ type ValidationProp = {
   [key: string]: Validation | Validation[]
 }
 
+export type SubmitResult = {
+  success: boolean,
+  errors?: Errors
+}
+
 type FormProps = {
   defaultValues: TValues,
-  validationRules: ValidationProp
+  validationRules: ValidationProp,
+  onSubmit: (values: TValues) => Promise<SubmitResult>
 }
 
 type Errors = {
   [key: string]: string[]
-}
-
-type FormState = {
-  values: TValues,
-  errors: Errors
 }
 
 type FormContext = {
@@ -125,13 +126,46 @@ Field.defaultProps = {
 };
 
 export const Form: React.FC<FormProps> = (props) => {
-  const errors: Errors = {};
-  Object.keys(props.defaultValues).forEach(fieldName => errors[fieldName] = []);
-  const [state, setState] = useState<FormState>({ values: props.defaultValues, errors });
+  const errs: Errors = {};
+  Object.keys(props.defaultValues).forEach(fieldName => errs[fieldName] = []);
+
+  const [values, setValues] = useState(props.defaultValues);
+  const [errors, setErrors] = useState(errs);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const setValue = (fieldName: string, value: any) => {
-    const newValues = { ...state.values, [fieldName]: value };
-    setState({ errors, values: newValues });
+    const newValues = { ...values, [fieldName]: value };
+    setErrors(errs);
+    setValues(newValues);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      setSubmitting(true);
+      const result = await props.onSubmit(values);
+      setErrors(result.errors || {});
+      setSubmitting(false);
+      setSubmitted(result.success);
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const errors: Errors = {};
+    let haveError = false;
+
+    Object.keys(props.defaultValues).map(fieldName => {
+      errors[fieldName] = validate(fieldName, values[fieldName]);
+
+      if (errors[fieldName].length > 0) {
+        haveError = true;
+      }
+    });
+    setErrors(errors);
+
+    return !haveError;
   };
 
   const validate = (fieldName: string, value: any): string[] => {
@@ -140,38 +174,41 @@ export const Form: React.FC<FormProps> = (props) => {
 
     if (Array.isArray(rules)) {
       rules.forEach(rule => {
-        const err = rule.validator(fieldName, state.values, rule.arg);
+        const err = rule.validator(fieldName, values, rule.arg);
         if (err) {
           errs.push(err);
         }
       })
     } else {
       if (rules) {
-        const err = rules.validator(fieldName, state.values, rules.arg);
+        const err = rules.validator(fieldName, values, rules.arg);
         if (err) {
           errs.push(err);
         }
       }
     }
 
-    const newErrors = { ...state.errors, [fieldName]: errs };
+    const newErrors = { ...errors, [fieldName]: errs };
 
-    setState({ values: state.values, errors: newErrors });
+    setErrors(newErrors);
 
     return errs;
   };
 
   const context: FormContext = {
-    errors: state.errors,
-    values: state.values,
+    errors,
+    values,
     setValue,
     validate
   };
 
   return (
     <FormContext.Provider value={context}>
-      <form className="form" noValidate>
+      <form className="form" noValidate onSubmit={handleSubmit}>
         {props.children}
+        <div className="form-group">
+          <button type="submit" disabled={submitting || submitted}>Submit</button>
+        </div>
       </form>
     </FormContext.Provider>
   );
