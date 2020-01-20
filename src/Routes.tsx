@@ -6,6 +6,7 @@ import ProductsPage from "./products/ProductsPage";
 import ProductPage from "./products/ProductPage";
 import LoginPage from "./LoginPage";
 import NotFoundPage from "./NotFoundPage";
+import ContactUsPage from "./contact-us/ContactUsPage";
 
 const AdminPage = React.lazy(() => import("./admin/AdminPage"));
 
@@ -21,6 +22,7 @@ const Routes: React.FC<RouteComponentProps> = (props) => {
             <Redirect exact from="/" to="/products"/>
             <Route path="/products" exact component={ProductsPage}/>
             <Route path="/products/:id" component={ProductPage}/>
+            <Route path="/contactus" component={ContactUsPage}/>
             <Route path="/admin">{loggedIn ? (
               <Suspense fallback={<div className="page-container">Loading...</div>}>
                 <AdminPage/>
