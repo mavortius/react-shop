@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import "url-search-params-polyfill";
-import { useProductsState } from "./ProductsStore";
+import { useStoreState } from "./Store";
 import { getProducts } from "./products-actions";
 import ProductsList from "./ProductsList";
 
 const ProductsPage: React.FC<RouteComponentProps> = (props) => {
   const [search, setSearch] = useState("");
-  const { productsState, setProductsState } = useProductsState();
+  const { productsState, setProductsState } = useStoreState();
 
   useEffect(() => {
       const searchParams = new URLSearchParams(props.location.search);

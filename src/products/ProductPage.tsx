@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Prompt, RouteComponentProps } from "react-router-dom";
 import Product from "./Product";
-import { useProductsState } from "./ProductsStore";
+import { useStoreState } from "./Store";
 import { getProduct } from "./products-actions";
+import { addToBasket } from "../basket/basket-actions";
 
 type Props = RouteComponentProps<{ id: string }>;
 
 const ProductPage: React.FC<Props> = (props) => {
   const [added, setAdded] = useState(false);
-  const { productsState, setProductsState } = useProductsState();
+  const { productsState, setProductsState, setBasketState } = useStoreState();
 
   const product = productsState.currentProduct;
   const loading = productsState.productsLoading;
@@ -22,7 +23,10 @@ const ProductPage: React.FC<Props> = (props) => {
   }, [product, props.match.params.id, setProductsState]);
 
   const handleAddClick = () => {
-    setAdded(true);
+    if (product) {
+      addToBasket(setBasketState, product);
+      setAdded(true);
+    }
   };
 
   const navAwayMessage = () =>

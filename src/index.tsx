@@ -2,13 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Routes from "./Routes";
-import { ProductsProvider } from "./products/ProductsStore";
+import { StoreProvider } from "./products/Store";
 
 const Root: React.FC = () => {
   return (
-    <ProductsProvider>
+    <StoreProvider>
       <Routes/>
-    </ProductsProvider>
+    </StoreProvider>
   )
 };
 
