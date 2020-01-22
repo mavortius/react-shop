@@ -1,36 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
-import { IProduct, products } from "./products-data";
+import { RouteComponentProps } from "react-router-dom";
 import "url-search-params-polyfill";
+import { useProductsState } from "./ProductsStore";
+import { getProducts } from "./products-actions";
+import ProductsList from "./ProductsList";
 
 const ProductsPage: React.FC<RouteComponentProps> = (props) => {
-  const [productList] = useState<Array<IProduct>>(products);
   const [search, setSearch] = useState("");
+  const { productsState, setProductsState } = useProductsState();
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(props.location.search);
+      const searchParams = new URLSearchParams(props.location.search);
 
     setSearch(searchParams.get("search") || "");
-  }, [props.location.search]);
+
+    getProducts(setProductsState).then(() => {
+    });
+  }, [setProductsState, props.location.search]);
 
   return (
     <div className="page-container">
       <p>
         Welcome to React Shop where you can get all your tools for ReactJS!
       </p>
-      <ul className="product-list">
-        {productList.map(product => {
-          if (!search || (search && product.name.toLowerCase().indexOf(search.toLowerCase()) > -1)) {
-            return (
-              <li key={product.id} className="product-list-item">
-                <Link to={`/products/${product.id}`}>{product.name}</Link>
-              </li>
-            );
-          } else {
-            return null;
-          }
-        })}
-      </ul>
+      <ProductsList search={search} products={productsState.products} loading={productsState.productsLoading}/>
     </div>
   )
 };

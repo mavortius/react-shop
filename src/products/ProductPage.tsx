@@ -1,31 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Prompt, RouteComponentProps } from "react-router-dom";
-import { getProduct, IProduct } from "./products-data";
 import Product from "./Product";
+import { useProductsState } from "./ProductsStore";
+import { getProduct } from "./products-actions";
 
 type Props = RouteComponentProps<{ id: string }>;
 
 const ProductPage: React.FC<Props> = (props) => {
   const [added, setAdded] = useState(false);
-  const [product, setProduct] = useState<IProduct | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { productsState, setProductsState } = useProductsState();
+
+  const product = productsState.currentProduct;
+  const loading = productsState.productsLoading;
 
   useEffect(() => {
     if (props.match.params.id) {
-      // @ts-ignore
-      async function retrieveProduct() {
-        const id = parseInt(props.match.params.id, 10);
-        const prod = await getProduct(id);
-
-        if (prod !== null) {
-          setProduct(prod);
-          setLoading(false);
-        }
-      }
-
-      retrieveProduct();
+      const id = parseInt(props.match.params.id, 10);
+      getProduct(setProductsState, id).then(() => {
+      });
     }
-  }, [product, props.match.params.id]);
+  }, [product, props.match.params.id, setProductsState]);
 
   const handleAddClick = () => {
     setAdded(true);
